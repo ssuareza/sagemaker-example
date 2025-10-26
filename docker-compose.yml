@@ -1,0 +1,30 @@
+services:
+  my-model-train:
+    container_name: my-model-train
+    build:
+      context: ./models/my-model
+      dockerfile: Dockerfile
+    environment:
+      - MODE=train
+      - CONFIG_PATH=/app/configs/dev.yaml
+      - OUTPUT_DIR=/app/output
+      - ENV=dev
+    volumes:
+      - ./models/my-model/output:/app/output
+      - ./models/my-model/data:/app/data
+
+  my-model:
+    container_name: my-model
+    build:
+      context: ./models/my-model
+      dockerfile: Dockerfile
+    environment:
+      - MODE=inference
+      - CONFIG_PATH=/app/configs/dev.yaml
+      - OUTPUT_DIR=/app/output
+      - ENV=dev
+    volumes:
+      - ./models/my-model/output:/app/output
+      - ./models/my-model/data:/app/data
+    ports:
+      - "8080:8080"

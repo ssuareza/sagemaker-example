@@ -1,0 +1,7 @@
+s3_bucket: "my-model-prod-bucket"
+s3_key: "model.pkl"
+endpoint_name: "my-model-prod"
+region: "us-east-1"
+instance_type: "ml.m5.large"
+instance_count: 1
+image_uri: "<your-docker-image-uri>"

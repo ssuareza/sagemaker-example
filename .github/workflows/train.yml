@@ -1,0 +1,39 @@
+name: Train Model
+
+on:
+  push:
+    paths:
+      - "models/**"
+  workflow_dispatch:
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r docker/requirements.txt
+
+      - name: Train Model
+        run: |
+          python models/my-model/src/train.py --config models/my-model/configs/dev.yaml
+
+      - name: Package Model
+        run: |
+          mkdir -p model_package
+          tar -czvf model_package/model.tar.gz -C models/my-model/src .
+
+      - name: Upload to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-1
+        run: |
+          aws s3 cp model_package/model.tar.gz s3://my-model-dev-bucket/model.tar.gz
