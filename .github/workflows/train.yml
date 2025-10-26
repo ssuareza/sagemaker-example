@@ -23,7 +23,9 @@ jobs:
 
       - name: Train Model
         run: |
-          python models/my-model/src/train.py
+          python models/my-model/src/train.py \
+          --sample=models/my-model/data/sample.csv \
+          --output=models/my-model/output
 
       # - name: Upload to S3
       #   env:

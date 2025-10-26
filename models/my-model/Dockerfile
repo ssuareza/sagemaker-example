@@ -17,8 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy model code
 COPY src ./src
 
-# Copy config
-COPY config.yaml ./config.yaml
-
 ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["python", "-m", "src.inference"]
+# CMD ["python", "-m", "src.inference"]
+CMD ["python", "/app/src/inference.py", "--model=/app/data/model.pkl"]
+# CMD ["python, "src.inference"]

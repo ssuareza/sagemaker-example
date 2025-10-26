@@ -1,3 +1,0 @@
-model_path: "./output/model.pkl"
-sample_path: "./data/sample.csv"
-output_dir: "./output"

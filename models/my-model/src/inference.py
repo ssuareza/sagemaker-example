@@ -1,24 +1,26 @@
-import yaml
+import argparse
 import joblib
 import pandas as pd
 from flask import Flask, request, jsonify
 
-# Load config
-with open("./config.yaml", "r") as f:
-    config = yaml.safe_load(f)
-
 # Flask App Initialization
 app = Flask(__name__)
 
+# Parse command-line arguments
+parser = argparse.ArgumentParser(
+    description="Start a Flask API with a trained model.")
+parser.add_argument("--model", type=str, required=True,
+                    help="Path to the trained model file.")
+args = parser.parse_args()
+
 # Load the trained model at startup
 try:
-    model = joblib.load(config["model_path"])
-    print(f"Model loaded successfully from {config['model_path']}")
+    model = joblib.load(args.model)
+    print(f"Model loaded successfully from {args.model}")
 except FileNotFoundError:
     model = None
     print(
-        f"Warning: Model file not found at {config['model_path']}. The /invocations endpoint will not work."
-    )
+        f"Warning: Model file not found at {args.model}. The /invocations endpoint will not work.")
 
 
 @app.route("/health", methods=["GET"])

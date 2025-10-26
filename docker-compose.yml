@@ -7,7 +7,13 @@ services:
     volumes:
       - ./models/my-model/output:/app/output
       - ./models/my-model/data:/app/data
-    command: ["python", "src/train.py"]
+    command:
+      [
+        "python",
+        "src/train.py",
+        "--sample=/app/data/sample.csv",
+        "--output=/app/output",
+      ]
 
   my-model:
     container_name: my-model
