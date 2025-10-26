@@ -19,7 +19,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r docker/requirements.txt
+          pip install -r models/my-model/requirements.txt
 
       - name: Train Model
         run: |
