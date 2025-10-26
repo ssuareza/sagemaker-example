@@ -1,25 +1,24 @@
-import os
+import yaml
 import joblib
 import pandas as pd
 from flask import Flask, request, jsonify
 
-# --- Configuration ---
-# Get the model path from the environment variable set in docker-compose
-MODEL_DIR = os.environ.get("OUTPUT_DIR", "/app/output")
-MODEL_PATH = os.path.join(MODEL_DIR, "model.pkl")
+# Load config
+with open("./config.yaml", "r") as f:
+    config = yaml.safe_load(f)
 
-# --- Flask App Initialization ---
+# Flask App Initialization
 app = Flask(__name__)
 
-# --- Load Model ---
 # Load the trained model at startup
 try:
-    model = joblib.load(MODEL_PATH)
-    print(f"Model loaded successfully from {MODEL_PATH}")
+    model = joblib.load(config["model_path"])
+    print(f"Model loaded successfully from {config['model_path']}")
 except FileNotFoundError:
     model = None
     print(
-        f"Warning: Model file not found at {MODEL_PATH}. The /invocations endpoint will not work.")
+        f"Warning: Model file not found at {config['model_path']}. The /invocations endpoint will not work."
+    )
 
 
 @app.route("/health", methods=["GET"])
@@ -29,7 +28,7 @@ def health():
     return jsonify({"status": "ok" if model else "model not found"}), status
 
 
-@app.route("/invocations", methods=["POST"])
+@app.route("/", methods=["POST"])
 def invocations():
     """Prediction endpoint."""
     if not model:

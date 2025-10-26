@@ -1,7 +1,7 @@
 @my-model-endpoint=http://localhost:8080
 
 ### Run a prediction 
-POST {{my-model-endpoint}}/invocations
+POST {{my-model-endpoint}}/
 Content-Type: application/json
 
 {

@@ -6,7 +6,8 @@ WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-  build-essential \
+  build-essential \ 
+  tini \
   && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
@@ -15,12 +16,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy model code
 COPY src ./src
-COPY configs ./configs
 
-# Set default environment variables
-ENV MODE="inference"
-ENV CONFIG_PATH="configs/dev.yaml"
-ENV AWS_DEFAULT_REGION="us-east-1"
+# Copy config
+COPY config.yaml ./config.yaml
 
-# Entrypoint: decides train, inference or validate based on MODE
-ENTRYPOINT ["python", "src/entrypoint.py"]
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["python", "-m", "src.inference"]

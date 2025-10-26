@@ -23,17 +23,12 @@ jobs:
 
       - name: Train Model
         run: |
-          python models/my-model/src/train.py --config models/my-model/configs/dev.yaml
+          python models/my-model/src/train.py
 
-      - name: Package Model
-        run: |
-          mkdir -p model_package
-          tar -czvf model_package/model.tar.gz -C models/my-model/src .
-
-      - name: Upload to S3
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1
-        run: |
-          aws s3 cp model_package/model.tar.gz s3://my-model-dev-bucket/model.tar.gz
+      # - name: Upload to S3
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     AWS_DEFAULT_REGION: us-east-1
+      #   run: |
+      #     aws s3 cp model_package/model.tar.gz s3://my-model-dev-bucket/model.tar.gz
