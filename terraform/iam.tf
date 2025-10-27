@@ -27,5 +27,5 @@ resource "aws_iam_role_policy_attachment" "s3_full_access" {
 }
 
 output "sagemaker_role_arn" {
-  value = aws_iam_role.sagemaker_execution_role.arn
+  value = aws_iam_role.sagemaker_example.arn
 }
