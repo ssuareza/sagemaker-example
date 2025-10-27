@@ -1,6 +1,6 @@
 import argparse
 import os
-import sagemaker
+from sagemaker import Session
 from sagemaker.sklearn.model import SKLearnModel
 
 
@@ -8,18 +8,22 @@ def deploy_model(model_data, instance_type, instance_count):
     """
     Deploys a pre-trained scikit-learn model to Amazon SageMaker.
     """
-    sagemaker_session = sagemaker.Session()
+    # Configuration
     role = os.getenv("SAGEMAKER_ROLE_ARN")
+    if not role:
+        raise ValueError(
+            "Environment variable SAGEMAKER_ROLE_ARN must be set.")
+
+    # Create session
+    session = Session()
 
     # Create a SageMaker SKLearnModel object
-    # The entry_point is the inference script that SageMaker will use
-    # when the endpoint receives a request.
     sklearn_model = SKLearnModel(
         model_data=model_data,
         role=role,
-        entry_point="inference.py",  # Your inference script
-        framework_version="1.2-1",  # scikit-learn version
-        sagemaker_session=sagemaker_session
+        entry_point="inference.py",
+        framework_version="1.2-1",
+        sagemaker_session=session
     )
 
     # Deploy the model to a SageMaker Endpoint

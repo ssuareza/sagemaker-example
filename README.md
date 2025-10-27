@@ -1,5 +1,7 @@
 # sagemaker-example
 
+Note: The Terraform state and lock file are being saved in the repository. No S3 bucket involved.
+
 ## Usage
 
 ### Train and generate the model
