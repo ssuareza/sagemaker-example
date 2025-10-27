@@ -23,14 +23,14 @@ except FileNotFoundError:
         f"Warning: Model file not found at {args.model}. The /invocations endpoint will not work.")
 
 
-@app.route("/health", methods=["GET"])
+@app.route("/ping", methods=["GET"])
 def health():
     """Health check endpoint."""
     status = 200 if model else 404
     return jsonify({"status": "ok" if model else "model not found"}), status
 
 
-@app.route("/", methods=["POST"])
+@app.route("/invocations", methods=["POST"])
 def invocations():
     """Prediction endpoint."""
     if not model:
