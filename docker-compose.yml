@@ -23,5 +23,7 @@ services:
     volumes:
       - ./models/forest/output:/app/output
       - ./models/forest/data:/app/data
+    environment:
+      - SM_MODEL_DIR=/app/output
     ports:
       - "8080:8080"
