@@ -24,7 +24,7 @@ def deploy_model(config_path: str, env: str = "dev"):
     if not role_arn:
         role_arn = get_execution_role()  # fallback for SageMaker notebooks
 
-    endpoint_name = config.get("endpoint_name", f"my-model-{env}")
+    endpoint_name = config.get("endpoint_name", f"forest-{env}")
     model_name = f"{endpoint_name}-model"
     image_uri = config.get("image_uri")  # Docker image URI
 

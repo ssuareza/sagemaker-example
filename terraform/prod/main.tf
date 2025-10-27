@@ -1,4 +1,4 @@
 module "s3" {
   source      = "../modules/s3_bucket"
-  bucket_name = "my-model-prod-bucket"
+  bucket_name = "forest-prod"
 }

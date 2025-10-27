@@ -1,7 +1,7 @@
-@my-model-endpoint=http://localhost:8080
+@forest-endpoint=http://localhost:8080
 
 ### Run a prediction 
-POST {{my-model-endpoint}}/
+POST {{forest-endpoint}}/
 Content-Type: application/json
 
 {
@@ -12,4 +12,4 @@ Content-Type: application/json
 }
 
 ### Health
-GET {{my-model-endpoint}}/health
+GET {{forest-endpoint}}/health

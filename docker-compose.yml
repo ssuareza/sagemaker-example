@@ -1,12 +1,12 @@
 services:
-  my-model-train:
-    container_name: my-model-train
+  forest-train:
+    container_name: forest-train
     build:
-      context: ./models/my-model
+      context: ./models/forest
       dockerfile: Dockerfile
     volumes:
-      - ./models/my-model/output:/app/output
-      - ./models/my-model/data:/app/data
+      - ./models/forest/output:/app/output
+      - ./models/forest/data:/app/data
     command:
       [
         "python",
@@ -15,13 +15,13 @@ services:
         "--output=/app/output",
       ]
 
-  my-model:
-    container_name: my-model
+  forest:
+    container_name: forest
     build:
-      context: ./models/my-model
+      context: ./models/forest
       dockerfile: Dockerfile
     volumes:
-      - ./models/my-model/output:/app/output
-      - ./models/my-model/data:/app/data
+      - ./models/forest/output:/app/output
+      - ./models/forest/data:/app/data
     ports:
       - "8080:8080"

@@ -2,10 +2,10 @@
 
 ## Usage
 
-### Train the model and save it
+### Train and generate the model
 
 ```sh
-dc run my-model-train
+dc run forest-train
 ```
 
 This will create a new model and save it to `models/output/model.pkl`.
@@ -13,7 +13,7 @@ This will create a new model and save it to `models/output/model.pkl`.
 ### Start endpoint
 
 ```sh
-dc up my-model
+dc up forest
 ```
 
 Now you can use the endpoints to make predictions. Use the `http.rest` as an example.

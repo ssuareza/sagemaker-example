@@ -9,7 +9,7 @@ from sklearn.metrics import accuracy_score
 
 def train_model(sample_path, output_dir):
     """
-    Train a RandomForest model, save locally, and optionally upload to S3.
+    Train a RandomForest model, and save locally.
     """
 
     # Load dataset
@@ -38,6 +38,7 @@ def train_model(sample_path, output_dir):
     print(f"Saved model to {local_model_path}")
 
 
+# Helper function to load dataset
 def load_data(csv_path):
     """Load dataset from CSV"""
     df = pd.read_csv(csv_path)
@@ -46,6 +47,7 @@ def load_data(csv_path):
     return X, y
 
 
+# Main
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train a RandomForest model.")
     parser.add_argument("--sample", type=str, required=True,
