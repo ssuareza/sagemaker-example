@@ -1,4 +1,4 @@
-name: Train Model
+name: Forest Model
 
 on:
   push:
@@ -33,6 +33,35 @@ jobs:
           aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
           aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           aws-region: ${{secrets.AWS_REGION}}
+
       - name: Upload to S3
         run: |
           aws s3 cp models/forest/output/model.pkl s3://forest-321/model.pkl
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r models/forest/requirements.txt
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws-region: ${{secrets.AWS_REGION}}
+
+      - name: Deploy to SageMaker
+        run: |
+          python models/forest/src/deploy.py \
+          --model-data s3://forest-321/model.pkl \
+          --instance-type ml.t3.medium \
+          --instance-count 1
