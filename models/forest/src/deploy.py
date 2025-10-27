@@ -10,12 +10,16 @@ def deploy_model(model_data, instance_type, instance_count, role_arn):
     """
     # Create session
     session = Session()
+    
+    # Get the directory of the current script to use as source_dir
+    script_path = os.path.dirname(os.path.realpath(__file__))
 
     # Create a SageMaker SKLearnModel object
     sklearn_model = SKLearnModel(
         model_data=model_data,
         role=role_arn,
         entry_point="inference.py",
+        source_dir=script_path,
         framework_version="1.2-1",
         sagemaker_session=session
     )
