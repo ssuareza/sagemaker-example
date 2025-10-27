@@ -4,23 +4,17 @@ from sagemaker import Session
 from sagemaker.sklearn.model import SKLearnModel
 
 
-def deploy_model(model_data, instance_type, instance_count):
+def deploy_model(model_data, instance_type, instance_count, role_arn):
     """
     Deploys a pre-trained scikit-learn model to Amazon SageMaker.
     """
-    # Configuration
-    role = os.getenv("SAGEMAKER_ROLE_ARN")
-    if not role:
-        raise ValueError(
-            "Environment variable SAGEMAKER_ROLE_ARN must be set.")
-
     # Create session
     session = Session()
 
     # Create a SageMaker SKLearnModel object
     sklearn_model = SKLearnModel(
         model_data=model_data,
-        role=role,
+        role=role_arn,
         entry_point="inference.py",
         framework_version="1.2-1",
         sagemaker_session=session
@@ -44,10 +38,13 @@ if __name__ == "__main__":
         description="Deploy a trained model to SageMaker.")
     parser.add_argument("--model-data", type=str, required=True,
                         help="S3 path to the trained model artifact (e.g., s3://your-bucket/model.tar.gz).")
+    parser.add_argument("--role-arn", type=str, required=True,
+                        help="The AWS IAM role ARN for SageMaker to assume.")
     parser.add_argument("--instance-type", type=str, default="ml.m5.large",
                         help="SageMaker instance type for the endpoint.")
     parser.add_argument("--instance-count", type=int, default=1,
                         help="Number of instances for the SageMaker endpoint.")
     args = parser.parse_args()
 
-    deploy_model(args.model_data, args.instance_type, args.instance_count)
+    deploy_model(args.model_data, args.instance_type,
+                 args.instance_count, args.role_arn)
