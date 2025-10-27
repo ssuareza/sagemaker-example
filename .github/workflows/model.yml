@@ -39,6 +39,7 @@ jobs:
           aws s3 cp models/forest/output/model.pkl s3://forest-321/model.pkl
 
   deploy:
+    needs: train
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

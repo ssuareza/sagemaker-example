@@ -1,4 +1,5 @@
 import argparse
+import os
 import sagemaker
 from sagemaker.sklearn.model import SKLearnModel
 
@@ -8,7 +9,7 @@ def deploy_model(model_data, instance_type, instance_count):
     Deploys a pre-trained scikit-learn model to Amazon SageMaker.
     """
     sagemaker_session = sagemaker.Session()
-    role = sagemaker.get_execution_role()
+    role = os.getenv("SAGEMAKER_ROLE_ARN")
 
     # Create a SageMaker SKLearnModel object
     # The entry_point is the inference script that SageMaker will use
