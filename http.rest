@@ -1,7 +1,8 @@
-@forest-endpoint=http://localhost:8080
+# @forest-model-endpoint=http://localhost:8080
+@forest-model-endpoint=https://runtime.sagemaker.us-east-1.amazonaws.com/endpoints/forest-model-endpoint/invocations
 
 ### Run a prediction 
-POST {{forest-endpoint}}/
+POST {{forest-model-endpoint}}/
 Content-Type: application/json
 
 {
@@ -12,4 +13,4 @@ Content-Type: application/json
 }
 
 ### Health
-GET {{forest-endpoint}}/health
+GET {{forest-model-endpoint}}/health

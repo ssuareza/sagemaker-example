@@ -27,6 +27,11 @@ jobs:
           --sample=models/forest/data/sample.csv \
           --output=models/forest/output
 
+      - name: Package model
+        run: |
+          cd models/forest/output
+          tar -czvf model.tar.gz model.pkl
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -36,7 +41,7 @@ jobs:
 
       - name: Upload to S3
         run: |
-          aws s3 cp models/forest/output/model.pkl s3://forest-321/model.pkl
+          aws s3 cp models/forest/output/model.tar.gz s3://forest-321/model.tar.gz
 
   deploy:
     needs: train
@@ -63,7 +68,7 @@ jobs:
       - name: Deploy to SageMaker
         run: |
           python models/forest/src/deploy.py \
-          --model-data s3://forest-321/model.pkl \
+          --model-data s3://forest-321/model.tar.gz \
           --instance-type ml.m5.large \
           --instance-count 1 \
           --role-arn ${{secrets.SAGEMAKER_ROLE_ARN}}

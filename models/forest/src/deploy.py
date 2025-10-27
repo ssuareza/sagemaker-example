@@ -21,7 +21,8 @@ def deploy_model(model_data, instance_type, instance_count, role_arn):
         entry_point="inference.py",
         source_dir=script_path,
         framework_version="1.2-1",
-        sagemaker_session=session
+        sagemaker_session=session,
+        endpoint_name="forest-model-endpoint"
     )
 
     # Deploy the model to a SageMaker Endpoint
