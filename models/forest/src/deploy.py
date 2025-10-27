@@ -10,7 +10,7 @@ def deploy_model(model_data, instance_type, instance_count, role_arn):
     """
     # Create session
     session = Session()
-    
+
     # Get the directory of the current script to use as source_dir
     script_path = os.path.dirname(os.path.realpath(__file__))
 
