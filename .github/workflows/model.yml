@@ -64,6 +64,6 @@ jobs:
         run: |
           python models/forest/src/deploy.py \
           --model-data s3://forest-321/model.pkl \
-          --instance-type ml.t3.medium \
+          --instance-type ml.m5.large \
           --instance-count 1 \
           --role-arn ${{secrets.SAGEMAKER_ROLE_ARN}}
