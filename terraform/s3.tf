@@ -1,7 +1,3 @@
-resource "aws_ecr_repository" "sagemaker_example" {
-  name = "sagemaker-example"
-}
-
 resource "aws_s3_bucket" "sagemaker_example" {
   bucket = "sagemaker-example"
 }
