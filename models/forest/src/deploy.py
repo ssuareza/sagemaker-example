@@ -2,7 +2,7 @@ import argparse
 import sagemaker
 
 
-def deploy_model(instance_type, instance_count, role_arn, image_uri):
+def deploy_model(instance_type, instance_count, role_arn, image_uri, endpoint_name):
     """
     Deploy a SageMaker endpoint using a custom container.
 
@@ -27,7 +27,9 @@ def deploy_model(instance_type, instance_count, role_arn, image_uri):
     # Deploy endpoint
     predictor = model.deploy(
         initial_instance_count=instance_count,
-        instance_type=instance_type
+        instance_type=instance_type,
+        endpoint_name=endpoint_name,
+        update_endpoint=True,
     )
 
     # Ignore error if 'endpoint_name' is not defined
@@ -51,12 +53,19 @@ if __name__ == "__main__":
                         help="Number of instances for the SageMaker endpoint.")
     parser.add_argument("--image-uri", type=str, required=True,
                         help="ECR URI of the custom Docker container.")
+    parser.add_argument("--endpoint-name", type=str, required=True,
+                        help="The name of the SageMaker endpoint.")
 
     args = parser.parse_args()
 
-    deploy_model(
+    deployed_predictor = deploy_model(
         instance_type=args.instance_type,
         instance_count=args.instance_count,
         role_arn=args.role_arn,
         image_uri=args.image_uri
     )
+
+    # Print the `endpoint_name`
+    if deployed_predictor:
+        print(
+            f"Deployment successful. Endpoint name: {deployed_predictor.endpoint_name}")

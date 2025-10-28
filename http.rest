@@ -1,5 +1,4 @@
 @forest-model-endpoint=http://localhost:8080
-# @forest-model-endpoint=https://runtime.sagemaker.us-east-1.amazonaws.com/endpoints/forest-model-endpoint/invocations
 
 ### Run a prediction 
 POST {{forest-model-endpoint}}/invocations
