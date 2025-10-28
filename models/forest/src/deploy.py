@@ -30,8 +30,12 @@ def deploy_model(instance_type, instance_count, role_arn, image_uri):
         instance_type=instance_type
     )
 
-    print(f"Endpoint deployed successfully: {predictor.endpoint_name}")
-    return predictor
+    if predictor:
+        print(f"Endpoint deployed successfully: {predictor.endpoint_name}")
+        return predictor
+    else:
+        print(
+            "Endpoint deployment started asynchronously or failed. No predictor returned.")
 
 
 if __name__ == "__main__":

@@ -12,10 +12,6 @@ permissions:
 jobs:
   terraform:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: terraform # Set working dir for all run steps
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -26,25 +22,32 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws-region: ${{secrets.AWS_REGION}}
 
-      - name: Terraform Init, Validate & Plan
-        run: |
-          terraform init
-          terraform validate
-          terraform plan
+      - name: Terraform Init
+        run: terraform init
+        working-directory: "terraform"
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: "terraform"
+
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: "terraform"
 
       - name: Terraform security scan
         uses: aquasecurity/tfsec-action@v1.0.3
         with:
           soft_fail: true
-          working_directory: terraform
+          working_directory: .
           additional_args: --concise-output --exclude-downloaded-modules
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
+        working-directory: "terraform"
 
       - name: Commit changes
         run: |
@@ -53,5 +56,5 @@ jobs:
           git checkout ${{ github.ref_name }}
           git pull origin ${{ github.ref_name }}
           git add .
-          git commit -m "Update terraform" || echo "No changes to commit"
+          git commit -m "Update terraform"
           git push origin ${{ github.ref_name }}
