@@ -40,3 +40,22 @@ How you can train your models?
 - Local
 - GitHub Actions
 - Sagemaker
+
+How the pipeline can be?
+
+1. User commits to `main`,
+2. Train model
+3. Push model image
+4. Deploy model in `staging` environment
+5. Deploy model in `production` environment after GitHub approval.
+
+## SageMaker
+
+SageMaker has a specific "contract" for custom containers:
+
+1. Listen on port 8080.
+2. Respond to `GET` requests at `/ping`.
+3. Respond to `POST` requests at `/invocations` (predictions).
+4. The container must be able to start running a `serve` command.
+
+The `serve` script runs a **Gunicorn** server. Which is a robust and production-ready HTTP server. It launches multiple worker processes that can handle requests in parallel.

@@ -6,7 +6,8 @@ app = Flask(__name__)
 
 # Load model
 model_path = os.path.join("/app/output/", "model.pkl")
-model = joblib.load(model_path)
+model_data = joblib.load(model_path)
+model = model_data["model"]
 
 
 @app.route("/ping", methods=["GET"])
