@@ -32,13 +32,7 @@ def deploy_model(instance_type, instance_count, role_arn, image_uri, endpoint_na
         update_endpoint=True,
     )
 
-    # Ignore error if 'endpoint_name' is not defined
-    if predictor:
-        print(f"Endpoint deployed successfully: {predictor.endpoint_name}")
-        return predictor
-    else:
-        print(
-            "Endpoint deployment started asynchronously or failed. No predictor returned.")
+    return predictor
 
 
 if __name__ == "__main__":
@@ -62,10 +56,6 @@ if __name__ == "__main__":
         instance_type=args.instance_type,
         instance_count=args.instance_count,
         role_arn=args.role_arn,
-        image_uri=args.image_uri
+        image_uri=args.image_uri,
+        endpoint_name=args.endpoint_name
     )
-
-    # Print the `endpoint_name`
-    if deployed_predictor:
-        print(
-            f"Deployment successful. Endpoint name: {deployed_predictor.endpoint_name}")
