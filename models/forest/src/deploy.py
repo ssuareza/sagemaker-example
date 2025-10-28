@@ -1,5 +1,6 @@
 import argparse
 import sagemaker
+from botocore.exceptions import ClientError
 
 
 def deploy_model(instance_type, instance_count, role_arn, image_uri, endpoint_name):
@@ -11,6 +12,7 @@ def deploy_model(instance_type, instance_count, role_arn, image_uri, endpoint_na
         instance_count (int): Number of instances.
         role_arn (str): SageMaker IAM role ARN.
         image_uri (str): ECR URI of the custom container.
+        endpoint_name (str): Name of the SageMaker endpoint.
 
     Returns:
         predictor: SageMaker Predictor object
@@ -28,8 +30,8 @@ def deploy_model(instance_type, instance_count, role_arn, image_uri, endpoint_na
     predictor = model.deploy(
         initial_instance_count=instance_count,
         instance_type=instance_type,
-        endpoint_name=endpoint_name,
-        update_endpoint=True,
+        # endpoint_name=endpoint_name,
+        # update_endpoint=True,
     )
 
     return predictor
