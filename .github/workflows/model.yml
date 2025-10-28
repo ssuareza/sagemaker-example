@@ -25,7 +25,7 @@ jobs:
         run: |
           python models/forest/src/train.py \
           --sample=models/forest/data/sample.csv \
-          --output=models/forest/output
+          --output=models/forest/output/model.pkl
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1

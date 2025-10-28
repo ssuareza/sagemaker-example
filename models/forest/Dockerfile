@@ -15,3 +15,4 @@ ENV PYTHONUNBUFFERED=TRUE
 
 # Set up command
 CMD ["python", "/app/src/inference.py"]
+
