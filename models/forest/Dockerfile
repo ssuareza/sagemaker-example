@@ -10,8 +10,6 @@ WORKDIR /app
 COPY src ./src
 COPY output ./output
 
-RUN echo pwd
-
 # Define environment variables
 ENV PYTHONUNBUFFERED=TRUE
 
