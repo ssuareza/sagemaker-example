@@ -31,7 +31,7 @@ def deploy_model(instance_type, instance_count, role_arn, image_uri, endpoint_na
         instance_type=instance_type,
         # Comment the next two lines if the endpont does not exists
         endpoint_name=endpoint_name,
-        update_endpoint=True,
+        # update_endpoint=True,
     )
 
     return predictor
