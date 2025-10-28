@@ -1,4 +1,4 @@
-# 1. Create the IAM role
+# role
 resource "aws_iam_role" "sagemaker_example" {
   name = "sagemaker-example"
 
@@ -16,6 +16,7 @@ resource "aws_iam_role" "sagemaker_example" {
   })
 }
 
+# permissions
 resource "aws_iam_role_policy_attachment" "sagemaker_full_access" {
   role       = aws_iam_role.sagemaker_example.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSageMakerFullAccess"
@@ -24,6 +25,11 @@ resource "aws_iam_role_policy_attachment" "sagemaker_full_access" {
 resource "aws_iam_role_policy_attachment" "s3_full_access" {
   role       = aws_iam_role.sagemaker_example.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+}
+
+resource "aws_iam_role_policy_attachment" "ecr_full_access" {
+  role       = aws_iam_role.sagemaker_example.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
 }
 
 output "sagemaker_role_arn" {
