@@ -6,6 +6,9 @@ on:
       - "terraform/**"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   terraform:
     runs-on: ubuntu-latest
