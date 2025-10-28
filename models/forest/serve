@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+import multiprocessing
+import os
+import signal
+import subprocess
+import sys
+
+cpu_count = multiprocessing.cpu_count()
+
+model_server_timeout = os.environ.get("MODEL_SERVER_TIMEOUT", 60)
+model_server_workers = int(os.environ.get("MODEL_SERVER_WORKERS", cpu_count))
+
+
+def sigterm_handler(nginx_pid, gunicorn_pid):
+    try:
+        os.kill(nginx_pid, signal.SIGQUIT)
+    except OSError:
+        pass
+    try:
+        os.kill(gunicorn_pid, signal.SIGTERM)
+    except OSError:
+        pass
+
+    sys.exit(0)
+
+
+def start_server():
+    print(
+        f"Starting the inference server with {model_server_workers} workers.")
+
+    # Start Gunicorn
+    # The --preload flag loads the application code before forking worker processes.
+    # This is beneficial for memory usage if your model is large.
+    gunicorn = subprocess.Popen(
+        [
+            "gunicorn",
+            "--timeout",
+            str(model_server_timeout),
+            "-k",
+            "gevent",
+            "-b",
+            "unix:/tmp/gunicorn.sock",
+            "-w",
+            str(model_server_workers),
+            "src.inference:app",
+        ]
+    )
+
+    signal.signal(signal.SIGTERM, lambda a, b: sigterm_handler(gunicorn.pid))
+
+    # Wait for the Gunicorn process to exit
+    gunicorn.wait()
+
+
+if __name__ == "__main__":
+    start_server()

@@ -1,17 +1,25 @@
-FROM python:3.10-slim
+# Use an official Python runtime as a parent image
+FROM python:3.11-slim
 
-# Install dependencies
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+# Set environment variables to prevent Python from writing pyc files and to buffer output
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy model files
+# Copy the requirements file and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the application source code and model artifact
 COPY src ./src
-COPY output ./output
+COPY output/model.pkl ./output/model.pkl
+COPY serve .
 
-# Define environment variables
-ENV PYTHONUNBUFFERED=TRUE
+# Make the serve script executable
+RUN chmod +x /app/serve
 
-# Set up command
-CMD ["python", "/app/src/inference.py"]
+# Set the entrypoint for the container
+# ENTRYPOINT ["/app/serve"]
+CMD ["/app/serve"]

@@ -30,9 +30,20 @@ jobs:
         run: terraform init
         working-directory: "terraform"
 
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: "terraform"
+
       - name: Terraform Plan
         run: terraform plan
         working-directory: "terraform"
+
+      - name: Terraform security scan
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          soft_fail: true
+          working_directory: .
+          additional_args: --concise-output --exclude-downloaded-modules
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
