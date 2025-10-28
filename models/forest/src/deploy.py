@@ -29,8 +29,8 @@ def deploy_model(instance_type, instance_count, role_arn, image_uri, endpoint_na
     predictor = model.deploy(
         initial_instance_count=instance_count,
         instance_type=instance_type,
-        # Comment the next two lines if the endpont does not exists
         endpoint_name=endpoint_name,
+        # Uncomment next line only if the endpoint exists
         # update_endpoint=True,
     )
 

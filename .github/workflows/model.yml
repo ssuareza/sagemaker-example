@@ -57,4 +57,4 @@ jobs:
             --instance-type ml.m5.large \
             --instance-count 1 \
             --image-uri ${{ secrets.ECR_URI }}:${{ github.sha }} \
-            --endpoint-name ${{ secrets.SAGEMAKER_ENDPOINT_NAME }}
+            --endpoint-name sagemaker-example
