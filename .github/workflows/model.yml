@@ -79,4 +79,4 @@ jobs:
           --role-arn ${{secrets.SAGEMAKER_ROLE_ARN}} \
           --instance-type ml.m5.large \
           --instance-count 1 \
-          --image-uri ${{secrets.IMAGE_URI}}
+          --image-uri ${{ secrets.ECR_URI }}:${{ github.sha }}
