@@ -3,7 +3,7 @@ resource "aws_ecr_repository" "sagemaker_example" {
 }
 
 resource "aws_s3_bucket" "sagemaker_example" {
-  bucket = var.bucket_name
+  bucket = "sagemaker-example"
 }
 
 resource "aws_s3_bucket_acl" "sagemaker_example_acl" {
