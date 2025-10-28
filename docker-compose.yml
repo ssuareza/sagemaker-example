@@ -12,7 +12,7 @@ services:
         "python",
         "src/train.py",
         "--sample=/app/data/sample.csv",
-        "--output=/app/output",
+        "--output=/app/output/model.pkl",
       ]
 
   forest:
@@ -20,10 +20,10 @@ services:
     build:
       context: ./models/forest
       dockerfile: Dockerfile
-    volumes:
-      - ./models/forest/output:/app/output
-      - ./models/forest/data:/app/data
-    environment:
-      - SM_MODEL_DIR=/app/output
+    # volumes:
+    #   - ./models/forest/output:/app/output
+    #   - ./models/forest/data:/app/data
+    # environment:
+    #   - SM_MODEL_DIR=/app/output
     ports:
       - "8080:8080"

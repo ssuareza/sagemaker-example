@@ -1,50 +1,39 @@
-import argparse
-import os
-import joblib
 import pandas as pd
+import joblib
+import argparse
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 
-def train_model(sample_path, output_dir):
-    """
-    Train a RandomForest model, and save locally.
-    """
+def train(sample, output):
+    # Load CSV
+    df = pd.read_csv(sample)
 
-    # Load dataset
-    X, y = load_data(sample_path)
-
-    # Split dataset
-    test_size = 0.2
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=test_size, random_state=42
-    )
-
-    # Train model
-    clf = RandomForestClassifier(
-        n_estimators=100, max_depth=5, random_state=42)
-    clf.fit(X_train, y_train)
-
-    # Evaluate
-    preds = clf.predict(X_test)
-    acc = accuracy_score(y_test, preds)
-    print(f"Test Accuracy: {acc:.4f}")
-
-    # Save model locally
-    os.makedirs(output_dir, exist_ok=True)
-    local_model_path = os.path.join(output_dir, "model.pkl")
-    joblib.dump(clf, local_model_path)
-    print(f"Saved model to {local_model_path}")
-
-
-# Helper function to load dataset
-def load_data(csv_path):
-    """Load dataset from CSV"""
-    df = pd.read_csv(csv_path)
+    # Replace 'target' with your actual label column
     X = df.drop("target", axis=1)
     y = df["target"]
-    return X, y
+
+    # Keep feature names consistent
+    feature_names = X.columns.tolist()
+
+    # Split into train/test (optional, can skip for full training)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42)
+
+    # Train RandomForest
+    clf = RandomForestClassifier(n_estimators=100, random_state=42)
+    clf.fit(X_train, y_train)
+
+    # Optional: evaluate
+    y_pred = clf.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    print(f"Validation Accuracy: {acc:.4f}")
+
+    # Save model
+    model_path = output
+    joblib.dump({"model": clf, "feature_names": feature_names}, model_path)
+    print(f"Model saved to {model_path}")
 
 
 # Main
@@ -56,4 +45,4 @@ if __name__ == "__main__":
                         help="Directory to save the trained model.")
     args = parser.parse_args()
 
-    train_model(args.sample, args.output)
+    train(args.sample, args.output)

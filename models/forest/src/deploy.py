@@ -1,55 +1,57 @@
 import argparse
-import os
-from sagemaker import Session
-from sagemaker.sklearn.model import SKLearnModel
+import sagemaker
 
 
-def deploy_model(model_data, instance_type, instance_count, role_arn):
+def deploy_model(instance_type, instance_count, role_arn, image_uri):
     """
-    Deploys a pre-trained scikit-learn model to Amazon SageMaker.
+    Deploy a SageMaker endpoint using a custom container.
+
+    Args:
+        instance_type (str): SageMaker instance type.
+        instance_count (int): Number of instances.
+        role_arn (str): SageMaker IAM role ARN.
+        image_uri (str): ECR URI of the custom container.
+
+    Returns:
+        predictor: SageMaker Predictor object
     """
-    # Create session
-    session = Session()
+    session = sagemaker.Session()
 
-    # Get the directory of the current script to use as source_dir
-    script_path = os.path.dirname(os.path.realpath(__file__))
-
-    # Create a SageMaker SKLearnModel object
-    sklearn_model = SKLearnModel(
-        model_data=model_data,
+    # Create SageMaker model from custom container
+    model = sagemaker.model.Model(
+        image_uri=image_uri,
         role=role_arn,
-        entry_point="inference.py",
-        source_dir=script_path,
-        framework_version="1.2-1",
-        sagemaker_session=session,
-        # endpoint_name="forest-model-endpoint"
+        sagemaker_session=session
     )
 
-    # Deploy the model to a SageMaker Endpoint
-    print(
-        f"Deploying model to endpoint with instance type: {instance_type} and count: {instance_count}")
-    predictor = sklearn_model.deploy(
-        instance_type=instance_type,
+    # Deploy endpoint
+    predictor = model.deploy(
         initial_instance_count=instance_count,
-        endpoint_name="forest-model-endpoint"  # You can customize the endpoint name
+        instance_type=instance_type
     )
 
-    print(f"Model deployed to endpoint: {predictor.endpoint_name}")
+    print(f"Endpoint deployed successfully: {predictor.endpoint_name}")
     return predictor
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Deploy a trained model to SageMaker.")
-    parser.add_argument("--model-data", type=str, required=True,
-                        help="S3 path to the trained model artifact (e.g., s3://your-bucket/model.tar.gz).")
+        description="Deploy a custom Docker container to SageMaker."
+    )
     parser.add_argument("--role-arn", type=str, required=True,
                         help="The AWS IAM role ARN for SageMaker to assume.")
     parser.add_argument("--instance-type", type=str, default="ml.m5.large",
                         help="SageMaker instance type for the endpoint.")
     parser.add_argument("--instance-count", type=int, default=1,
                         help="Number of instances for the SageMaker endpoint.")
+    parser.add_argument("--image-uri", type=str, required=True,
+                        help="ECR URI of the custom Docker container.")
+
     args = parser.parse_args()
 
-    deploy_model(args.model_data, args.instance_type,
-                 args.instance_count, args.role_arn)
+    deploy_model(
+        instance_type=args.instance_type,
+        instance_count=args.instance_count,
+        role_arn=args.role_arn,
+        image_uri=args.image_uri
+    )

@@ -1,16 +1,16 @@
-# @forest-model-endpoint=http://localhost:8080
-@forest-model-endpoint=https://runtime.sagemaker.us-east-1.amazonaws.com/endpoints/forest-model-endpoint/invocations
+@forest-model-endpoint=http://localhost:8080
+# @forest-model-endpoint=https://runtime.sagemaker.us-east-1.amazonaws.com/endpoints/forest-model-endpoint/invocations
 
 ### Run a prediction 
-POST {{forest-model-endpoint}}/
+POST {{forest-model-endpoint}}/invocations
 Content-Type: application/json
 
 {
-  "instances": [
+  "inputs": [
     [5.1, 3.5, 1.4, 0.2],
     [6.3, 3.3, 6.0, 2.5]
   ]
 }
 
-### Health
-GET {{forest-model-endpoint}}/health
+### Ping
+GET {{forest-model-endpoint}}/ping

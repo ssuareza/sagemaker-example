@@ -1,57 +1,25 @@
-import os
 import joblib
-import pandas as pd
+import os
 from flask import Flask, request, jsonify
 
+app = Flask(__name__)
 
-def model_fn(model_dir):
-    """
-    Loads the trained model from the disk.
-    SageMaker will call this function and pass the model directory.
-    """
-    model_path = os.path.join(model_dir, "model.pkl")
-    try:
-        model = joblib.load(model_path)
-        print(f"Model loaded successfully from {model_path}")
-        return model
-    except FileNotFoundError:
-        print(f"Error: Model file not found at {model_path}")
-        return None
+# Load model
+model_path = os.path.join("/app/output/", "model.pkl")
+model = joblib.load(model_path)
 
 
-def predict_fn(input_data, model):
-    """
-    Makes a prediction using the loaded model.
-    """
-    if not model:
-        raise ValueError("Model is not loaded")
-
-    # Assuming input_data is a dictionary with an 'instances' key
-    # which is a list of records.
-    df = pd.DataFrame(input_data["instances"])
-    predictions = model.predict(df).tolist()
-    return {"predictions": predictions}
+@app.route("/ping", methods=["GET"])
+def ping():
+    return jsonify(status="ok")
 
 
-# The following is for local testing and is not used by SageMaker.
-if __name__ == '__main__':
-    # For local testing, we need a way to specify the model path.
-    # We'll use an environment variable.
-    model_dir = os.environ.get("SM_MODEL_DIR", ".")
-    model = model_fn(model_dir)
+@app.route("/invocations", methods=["POST"])
+def predict():
+    data = request.get_json()
+    preds = model.predict(data["inputs"])
+    return jsonify(predictions=preds.tolist())
 
-    app = Flask(__name__)
 
-    @app.route("/ping", methods=["GET"])
-    def health():
-        """Health check endpoint that SageMaker uses."""
-        status = 200 if model else 404
-        return jsonify({"status": "ok" if model else "model not found"}), status
-
-    @app.route('/invocations', methods=['POST'])
-    def invocations():
-        input_data = request.get_json()
-        output = predict_fn(input_data, model)
-        return jsonify(output)
-
-    app.run(host="0.0.0.0", port=8080)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080, debug=False)
