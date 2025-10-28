@@ -49,6 +49,7 @@ jobs:
         with:
           context: ./models/forest
           push: true
+          provenance: false
           platforms: linux/amd64
           tags: |
             ${{ secrets.ECR_URI }}:${{ github.sha }}
