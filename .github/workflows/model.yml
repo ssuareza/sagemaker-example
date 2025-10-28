@@ -7,39 +7,36 @@ on:
   workflow_dispatch:
 
 jobs:
-  train:
+  train-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
+      - run: pip install -r models/forest/requirements.txt
 
-      - name: Install dependencies
-        run: |
-          pip install -r models/forest/requirements.txt
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Train Model
         run: |
           python models/forest/src/train.py \
-          --sample=models/forest/data/sample.csv \
-          --output=models/forest/output/model.pkl
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
-          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-          aws-region: ${{secrets.AWS_REGION}}
+            --sample=models/forest/data/sample.csv \
+            --output=models/forest/output/model.pkl
 
       - name: Login to Amazon ECR
-        id: login-ecr
         run: |
           aws ecr get-login-password --region ${{ secrets.AWS_REGION }} \
-            | docker login --username AWS \
-            --password-stdin ${{ secrets.ECR_URI }}
+            | docker login --username AWS --password-stdin ${{ secrets.ECR_URI }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -51,35 +48,12 @@ jobs:
           push: true
           provenance: false
           platforms: linux/amd64
-          tags: |
-            ${{ secrets.ECR_URI }}:${{ github.sha }}
-
-  deploy:
-    needs: train
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          pip install -r models/forest/requirements.txt
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
-          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-          aws-region: ${{secrets.AWS_REGION}}
+          tags: ${{ secrets.ECR_URI }}:${{ github.sha }}
 
       - name: Deploy to SageMaker
         run: |
           python models/forest/src/deploy.py \
-          --role-arn ${{secrets.SAGEMAKER_ROLE_ARN}} \
-          --instance-type ml.m5.large \
-          --instance-count 1 \
-          --image-uri ${{ secrets.ECR_URI }}:${{ github.sha }}
+            --role-arn ${{ secrets.SAGEMAKER_ROLE_ARN }} \
+            --instance-type ml.m5.large \
+            --instance-count 1 \
+            --image-uri ${{ secrets.ECR_URI }}:${{ github.sha }}

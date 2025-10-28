@@ -30,6 +30,7 @@ def deploy_model(instance_type, instance_count, role_arn, image_uri):
         instance_type=instance_type
     )
 
+    # Ignore error if 'endpoint_name' is not defined
     if predictor:
         print(f"Endpoint deployed successfully: {predictor.endpoint_name}")
         return predictor
